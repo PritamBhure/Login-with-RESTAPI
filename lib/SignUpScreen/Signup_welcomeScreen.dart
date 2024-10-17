@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../LoginScreen/loginscreen.dart';
+import 'Farm_Info.dart';
 
 
 
 class SignupWelcomescreen extends StatelessWidget {
   @override
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController repasswordController = TextEditingController();
+
+
+
+
+
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
@@ -105,7 +116,9 @@ class SignupWelcomescreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.02),
               // Full Name TextFormField
               TextFormField(
+                controller: fullNameController,
                 decoration: InputDecoration(
+
                   labelText: 'Full Name',
                   labelStyle: TextStyle(color: Colors.grey),
                   prefixIcon: Icon(Icons.person_outline),
@@ -124,7 +137,7 @@ class SignupWelcomescreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.025),
               // Email TextFormField
               TextFormField(
-                obscureText: true,
+                controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Email Address',
                   labelStyle: TextStyle(color: Colors.grey),
@@ -144,7 +157,7 @@ class SignupWelcomescreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.025),
               // Phone Number TextFormField
               TextFormField(
-                decoration: InputDecoration(
+                controller: phoneController,                decoration: InputDecoration(
                   labelText: 'Phone Number',
                   labelStyle: TextStyle(color: Colors.grey),
                   prefixIcon: Icon(Icons.phone_outlined),
@@ -163,6 +176,7 @@ class SignupWelcomescreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.025),
               // Password TextFormField
               TextFormField(
+                controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -183,6 +197,7 @@ class SignupWelcomescreen extends StatelessWidget {
               SizedBox(height: screenHeight * 0.025),
               // Re-enter Password TextFormField
               TextFormField(
+                controller: repasswordController,
                 decoration: InputDecoration(
                   labelText: 'Re-enter Password',
                   labelStyle: TextStyle(color: Colors.grey),
@@ -223,7 +238,20 @@ class SignupWelcomescreen extends StatelessWidget {
                     width: screenHeight * 0.25,
                     height: screenHeight * 0.065,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Form_Info(
+                              fullName: fullNameController.text,
+                              email: emailController.text,
+                              phone: phoneController.text,
+                              password: passwordController.text,
+                              repassword: repasswordController.text,
+                            ),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFD5715B),
                         shape: RoundedRectangleBorder(

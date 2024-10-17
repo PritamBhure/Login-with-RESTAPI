@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../LoginScreen/loginscreen.dart';
-
-
+import 'Verification_Screen.dart';
 
 class Form_Info extends StatelessWidget {
+  final String fullName;
+  final String email;
+  final String phone;
+  final String password;
+  final String repassword;
+
+  Form_Info({
+    required this.fullName,
+    required this.email,
+    required this.phone,
+    required this.password,
+    required this.repassword,
+  });
+
+  final TextEditingController businessnameController = TextEditingController();
+  final TextEditingController InformalnameController = TextEditingController();
+  final TextEditingController StreetaddressController = TextEditingController();
+  final TextEditingController CityController = TextEditingController();
+  final TextEditingController ZipcodeController = TextEditingController();
+
+ String? selectedState;
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -47,8 +68,9 @@ class Form_Info extends StatelessWidget {
               ),
               SizedBox(height: screenHeight * 0.03),
 
-              // Full Name TextFormField
+              // Business Name TextFormField
               TextFormField(
+                controller: businessnameController,
                 decoration: InputDecoration(
                   labelText: 'Business Name',
                   labelStyle: TextStyle(color: Colors.grey),
@@ -66,9 +88,10 @@ class Form_Info extends StatelessWidget {
                 ),
               ),
               SizedBox(height: screenHeight * 0.025),
-              // Information TextFormField
+
+              // Informal Name TextFormField
               TextFormField(
-                obscureText: true,
+                controller: InformalnameController,
                 decoration: InputDecoration(
                   labelText: 'Informal Name',
                   labelStyle: TextStyle(color: Colors.grey),
@@ -86,8 +109,10 @@ class Form_Info extends StatelessWidget {
                 ),
               ),
               SizedBox(height: screenHeight * 0.025),
-              // Phone Number TextFormField
+
+              // Street Address TextFormField
               TextFormField(
+                controller: StreetaddressController,
                 decoration: InputDecoration(
                   labelText: 'Street Address',
                   labelStyle: TextStyle(color: Colors.grey),
@@ -105,9 +130,10 @@ class Form_Info extends StatelessWidget {
                 ),
               ),
               SizedBox(height: screenHeight * 0.025),
+
               // City TextFormField
               TextFormField(
-                obscureText: true,
+                controller: CityController,
                 decoration: InputDecoration(
                   labelText: 'City',
                   labelStyle: TextStyle(color: Colors.grey),
@@ -125,60 +151,135 @@ class Form_Info extends StatelessWidget {
                 ),
               ),
               SizedBox(height: screenHeight * 0.025),
-              // Zipcode  TextFormField
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'EnterZipcode',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.grey[50],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: screenHeight * 0.02,
-                    horizontal: screenWidth * 0.03,
-                  ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.04),
+
+              // State and Zipcode Row
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                      );
-                    },
-                    child: Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.04,
-                        color: Colors.black,
-                        decoration: TextDecoration.underline,
+                  // Dropdown for State
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenHeight * 0.001,
+                        horizontal: screenWidth * 0.001,
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        value: null, // Default value null for empty selection
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none, // No border
+                        ),
+                        hint: Text('State'), // Placeholder hint
+                        items: [
+                          'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+                          'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+                          'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+                          'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+                          'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+                          'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+                        ].map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(fontSize: screenWidth * 0.03),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          selectedState = newValue;
+                        },
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.black),
                       ),
                     ),
+                  ),
+
+                  SizedBox(width: screenWidth * 0.01), // Space between fields
+
+                  // Zipcode TextFormField
+                  Expanded(
+                    child: TextFormField(
+                      controller: ZipcodeController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Enter Zipcode',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: screenHeight * 0.02,
+                          horizontal: screenWidth * 0.03,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: screenHeight * 0.15),
+
+              // Continue Button with Arrow Icon
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    iconSize: screenWidth*0.1,
+
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
                   SizedBox(
                     width: screenHeight * 0.25,
                     height: screenHeight * 0.065,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VerificationScreen(
+                              fullName: fullName,
+                              email: email,
+                              phone: phone,
+                              password: password,
+                              repassword: repassword,
+                              businessnmae: businessnameController.text,
+                              Information: InformalnameController.text,
+                              Streetaddress: StreetaddressController.text,
+                              Zipcode: ZipcodeController.text,
+                              selectedState: selectedState,
+                            ),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFFD5715B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: screenWidth * 0.05,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Continue',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.04,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(width: 5), // Space between text and icon
+
+                        ],
                       ),
                     ),
                   ),
