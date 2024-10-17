@@ -1,27 +1,35 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        textTheme: TextTheme(
-          bodyMedium: TextStyle(
-            color: Colors.grey,
-            fontSize: 14,
-          ),
-        ),
-      ),
-      home: BusinessHoursScreen(),
-    );
-  }
-}
+import 'package:http/http.dart' as http;
+import 'CompletionScreen.dart';
 
 class BusinessHoursScreen extends StatefulWidget {
+  late final String fullName;
+  late final String email;
+  final String phone;
+  final String password;
+  final String repassword;
+  final String businessnmae;
+  final String Information;
+  final String Streetaddress;
+  final String Zipcode;
+  final String? selectedState;
+
+  BusinessHoursScreen({
+    required this.fullName,
+    required this.email,
+    required this.phone,
+    required this.password,
+    required this.repassword,
+    required this.businessnmae,
+    required this.Information,
+    required this.Streetaddress,
+    required  this.Zipcode,
+    this.selectedState, // A
+  });
+
+
   @override
   _BusinessHoursScreenState createState() => _BusinessHoursScreenState();
 }
@@ -32,6 +40,61 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
   // Selected days of the week
   List<bool> isSelectedDay = [false, false, true, false, false, false, false];
 
+  // Business hours as per selected days
+  Map<String, List<String>> businessHours = {
+    "mon": ["8:00am - 10:00am"],
+    "tue": ["10:00am - 1:00pm"],
+    "wed": [],
+    "thu": [],
+    "fri": [],
+    "sat": [],
+    "sun": []
+  };
+
+  // Function to send data to the API
+  Future<void> sendRegistrationData() async {
+    // Prepare the data for the request
+    Map<String, dynamic> requestData = {
+      "full_name": widget.fullName,
+      "email": widget.email,
+      "phone": widget.phone,
+      "password": widget.password,
+      "role": "farmer",  // Example fixed role
+      "business_name": widget.businessnmae,
+      "informal_name": widget.Information,
+      "address": widget.Streetaddress,
+      "city": "Poughkeepsie",  // Replace with your city variable
+      "state": widget.selectedState ?? "New York",
+      "zip_code": int.parse(widget.Zipcode),
+      "registration_proof": "my_proof.pdf", // Replace with actual proof
+      "business_hours": businessHours,
+      "device_token": "sample_device_token", // Replace with actual token
+      "type": "email",  // Fixed type for email
+      "social_id": "",  // Blank for normal registration
+    };
+
+    // Make the POST request
+    final url = Uri.parse("https://sowlab.com/assignment/user/register");
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(requestData),
+      );
+
+      if (response.statusCode == 200) {
+        // Success: Handle the response
+        print("Registration Successful");
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SuccessScreen()));
+      } else {
+        // Error: Handle the error
+        print("Error: ${response.body}");
+      }
+    } catch (e) {
+      print("Error during request: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -41,44 +104,28 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.08,
-          vertical: screenHeight * 0.08,
-        ),
+            horizontal: screenWidth * 0.08, vertical: screenWidth * 0.1),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Back Button and Title
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Text(
-                  'FarmerEats',
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.04,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: screenHeight * 0.02),
-
-            // Signup Step Info
             Text(
-              'Signup 4 of 4',
+              'FarmerEats',
+              style: TextStyle(
+                fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: screenHeight * 0.04),
+            Text(
+              'Signup 4 of 4 ',
               style: TextStyle(
                 fontSize: screenWidth * 0.04,
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: screenHeight * 0.02),
-
-            // Main Title
+            SizedBox(height: screenHeight * 0.01),
             Text(
               'Business Hours',
               style: TextStyle(
@@ -87,6 +134,7 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
                 color: Colors.black,
               ),
             ),
+            SizedBox(height: screenHeight * 0.03),
             SizedBox(height: screenHeight * 0.02),
 
             // Subtitle
@@ -139,29 +187,50 @@ class _BusinessHoursScreenState extends State<BusinessHoursScreen> {
             ),
 
             // Signup Button
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Perform signup action here
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFD5715B), // Button background color
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.2,
-                    vertical: screenHeight * 0.02,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  iconSize: screenWidth * 0.1,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(
+                  width: screenHeight * 0.25,
+                  height: screenHeight * 0.065,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Navigate to the next screen or handle form submission
+                      sendRegistrationData();
+
+
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFD5715B),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child:  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Signup',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 5), // Space between text and icon
+
+                      ],
+                    ),
                   ),
                 ),
-                child: Text(
-                  'Signup',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: screenWidth * 0.045,
-                  ),
-                ),
-              ),
+              ],
             ),
           ],
         ),
