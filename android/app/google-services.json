@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "892507769032",
+    "project_id": "login-assignment-soft-lab",
+    "storage_bucket": "login-assignment-soft-lab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892507769032:android:76d6c7b8de2530386bfdfd",
+        "android_client_info": {
+          "package_name": "com.softwarelab.login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892507769032-4cuv88j1vg9tr1c1aa7j43ca1cnn8a3u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUN-qBlvZ-8MXO7Sa39Q9kpWUbB98PrIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892507769032-4cuv88j1vg9tr1c1aa7j43ca1cnn8a3u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
